@@ -1,10 +1,19 @@
-# main.py
-
 import pandas as pd
 import numpy as np
 import joblib
 from fastapi import FastAPI
 from pydantic import BaseModel
+
+# 0. ADD this FullModelWrapper class first
+class FullModelWrapper:
+    def __init__(self, pipeline, label_encoder):
+        self.pipeline = pipeline
+        self.label_encoder = label_encoder
+
+    def predict(self, X):
+        encoded_preds = self.pipeline.predict(X)
+        decoded_preds = self.label_encoder.inverse_transform(encoded_preds)
+        return decoded_preds
 
 # 1. Load your saved model
 full_model = joblib.load('hall_id_full_model.pkl')
